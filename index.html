@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Recognition with AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony Neutrals -->
+    <!-- Application Structure Plan: The SPA is designed as a narrative, vertically scrolling journey that mirrors the presentation's flow. A fixed header with navigation allows users to jump between key thematic sections, making exploration non-linear and user-driven. This structure was chosen to guide the user through the project's story—from the problem statement to the technical solution and key challenges—in a logical sequence, using interactive elements to deepen understanding at each stage, which is more effective than a static report. -->
+    <!-- Visualization & Content Choices: 
+        - Intro (The Challenge): Static Text -> Goal: Inform -> Simple, direct text to set the stage.
+        - Tech Stack (MediaPipe/TensorFlow): 2-Column Layout -> Goal: Inform -> Organizes the core technologies for easy comparison.
+        - Algorithm (LSTM vs Transformer): Interactive Toggle -> Goal: Compare -> Allows users to actively switch between the old and new methods, with simple diagrams visually reinforcing the architectural difference (sequential vs. parallel). This interaction makes the choice of algorithm more impactful.
+        - Core Innovation (Self-Attention): Interactive Text -> Goal: Explain -> Highlighting key terms in the analogy makes the abstract concept more tangible and easier to grasp.
+        - Project Workflow: Clickable Diagram -> Goal: Organize -> Breaks down the complex process into digestible, interactive steps, encouraging exploration.
+        - Key Challenge (Overfitting): Interactive Line Chart (Chart.js) -> Goal: Analyze/Compare -> This is the central visualization. By allowing users to toggle between "Small" and "Large" datasets, it powerfully demonstrates the concept of overfitting and generalization in a way static text cannot. It shows the *impact* of data size on model performance.
+        - Future Work: 3-Column Layout -> Goal: Inform -> A clear, scannable summary of next steps.
+        - Justification: This blend of text and interactive visualizations turns a passive presentation into an active learning experience, making complex AI concepts accessible and memorable. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 45vh;
+            max-height: 400px;
+        }
+        .nav-link {
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #2563eb; /* blue-600 */
+        }
+        .active-tab {
+            background-color: #3b82f6 !important; /* blue-500 */
+            color: white !important;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header class="bg-white/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-slate-800">Sign Language AI</h1>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                <a href="#challenge" class="nav-link">Challenge</a>
+                <a href="#tech" class="nav-link">Technology</a>
+                <a href="#algorithm" class="nav-link">Algorithm</a>
+                <a href="#challenge-deep-dive" class="nav-link">Key Challenge</a>
+                <a href="#future" class="nav-link">Future Work</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-24">
+        <div class="container mx-auto px-6 space-y-20 md:space-y-28">
+
+            <!-- Section 1: The Challenge -->
+            <section id="challenge" class="text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Bridging the Communication Gap</h2>
+                <p class="max-w-3xl mx-auto text-lg text-slate-600">
+                    Our objective is to build a smart system that can accurately recognize and translate common sign language gestures directly from a webcam, using cutting-edge AI to bridge a critical communication gap for the deaf and hard-of-hearing community.
+                </p>
+            </section>
+
+            <!-- Section 2: The Technology Stack -->
+            <section id="tech">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900">The Technology Behind Our System</h2>
+                    <p class="max-w-2xl mx-auto text-lg text-slate-600 mt-4">Two key pieces of technology power this project: the "eyes" that see and the "brain" that understands.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200">
+                        <div class="text-4xl mb-4">👁️</div>
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">Google's MediaPipe</h3>
+                        <p class="text-slate-600">This is the **"eyes"** of our system. It's a powerful framework that analyzes the webcam video in real-time and extracts a detailed 3D skeleton of landmark points from the body, face, and hands. It turns raw video pixels into meaningful data for our model.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200">
+                        <div class="text-4xl mb-4">🧠</div>
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">TensorFlow & Keras</h3>
+                        <p class="text-slate-600">This is the **"brain."** TensorFlow is the industry-standard library for training powerful neural networks. Keras provides a user-friendly interface that allows us to design, build, and train complex models like the Transformer used in this project.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 3: The Algorithm -->
+            <section id="algorithm">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900">A State-of-the-Art Algorithm</h2>
+                    <p class="max-w-2xl mx-auto text-lg text-slate-600 mt-4">We chose a Transformer model over older architectures for its ability to understand the complete context of a gesture.</p>
+                </div>
+                <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200">
+                    <div class="flex justify-center mb-6">
+                        <div class="bg-slate-200 p-1 rounded-full flex space-x-1">
+                            <button id="lstm-btn" class="px-4 py-2 text-sm font-semibold rounded-full bg-white text-slate-700 w-32">LSTM (Older)</button>
+                            <button id="transformer-btn" class="px-4 py-2 text-sm font-semibold rounded-full text-slate-600 w-32 active-tab">Transformer</button>
+                        </div>
+                    </div>
+                    <div id="algorithm-content">
+                        <!-- Content will be injected by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+             <!-- Section 4: Deep Dive - Self-Attention -->
+            <section id="self-attention" class="max-w-4xl mx-auto text-center">
+                 <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Core Innovation: Self-Attention</h2>
+                 <p class="text-lg text-slate-600 leading-relaxed">The "magic" of the Transformer is its ability to weigh the importance of different parts of a sequence. Consider this sentence:</p>
+                 <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200 mt-6 text-2xl font-mono tracking-wide">
+                     <p>The dog chased the ball until <span class="bg-blue-100 text-blue-800 rounded px-2 py-1">it</span> was tired.</p>
+                 </div>
+                 <p class="text-lg text-slate-600 mt-6">Your brain instantly knows "it" refers to the "dog," not the "ball." Self-Attention gives our AI this same ability to focus on what matters within a gesture, leading to a much more accurate understanding.</p>
+            </section>
+            
+            <!-- Section 5: The Overfitting Challenge -->
+            <section id="challenge-deep-dive">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900">Key Challenge: The "Lazy Student" Problem</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-slate-600 mt-4">A powerful model trained on a tiny dataset doesn't learn, it memorizes. This is called **overfitting**. We can visualize this by comparing the model's accuracy on data it has seen (Training) versus data it hasn't (Validation).</p>
+                </div>
+                <div class="max-w-5xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-lg border border-slate-200">
+                    <div class="flex flex-col sm:flex-row justify-center items-center mb-6">
+                        <span class="font-medium text-slate-600 mb-2 sm:mb-0 sm:mr-4">Dataset Size:</span>
+                        <div class="bg-slate-200 p-1 rounded-full flex space-x-1">
+                            <button id="small-data-btn" class="px-4 py-2 text-sm font-semibold rounded-full bg-white text-slate-700 w-36">Small (3 seq)</button>
+                            <button id="large-data-btn" class="px-4 py-2 text-sm font-semibold rounded-full text-slate-600 w-36 active-tab">Large (15 seq)</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="overfittingChart"></canvas>
+                    </div>
+                    <div id="chart-explanation" class="text-center mt-4 text-slate-600 max-w-2xl mx-auto">
+                        <!-- Explanation injected by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Future Work -->
+            <section id="future" class="pb-20 md:pb-28">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900">Conclusion & Future Work</h2>
+                     <p class="max-w-3xl mx-auto text-lg text-slate-600 mt-4">We've successfully built a functional proof-of-concept. The next steps involve expanding its capabilities and robustness.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200 text-center">
+                        <div class="text-4xl mb-4">📚</div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Expand Vocabulary</h3>
+                        <p class="text-slate-600">Increase the number of recognized signs from three to dozens or even hundreds to create a more practical communication tool.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200 text-center">
+                        <div class="text-4xl mb-4">🔄</div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Data Augmentation</h3>
+                        <p class="text-slate-600">Use code to artificially create thousands of variations of our training data, making the model robust enough to work in any lighting or background.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200 text-center">
+                        <div class="text-4xl mb-4">📱</div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Application Development</h3>
+                        <p class="text-slate-600">Package the final model into a user-friendly mobile or web application for real-world use and accessibility.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-6">
+        <div class="container mx-auto px-6 text-center text-sm">
+            <p>&copy; 2025 AI Project Showcase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Algorithm Toggle Logic
+            const lstmBtn = document.getElementById('lstm-btn');
+            const transformerBtn = document.getElementById('transformer-btn');
+            const algorithmContent = document.getElementById('algorithm-content');
+
+            const content = {
+                lstm: `
+                    <h3 class="text-xl font-bold text-center mb-4 text-slate-800">LSTM (Long Short-Term Memory)</h3>
+                    <p class="text-slate-600 mb-4">An LSTM model reads a sign gesture frame-by-frame, in sequence. It relies on a "memory" of past frames to understand the motion. However, this memory can fade over longer gestures, potentially losing context.</p>
+                    <div class="flex justify-center space-x-2 items-center h-24">
+                        <div class="w-12 h-12 bg-slate-300 rounded-lg flex items-center justify-center font-mono">F1</div>
+                        <div class="text-2xl text-slate-400">&rarr;</div>
+                        <div class="w-12 h-12 bg-slate-300 rounded-lg flex items-center justify-center font-mono">F2</div>
+                        <div class="text-2xl text-slate-400">&rarr;</div>
+                        <div class="w-12 h-12 bg-slate-300 rounded-lg flex items-center justify-center font-mono">F3</div>
+                        <div class="text-2xl text-slate-400">&rarr;</div>
+                        <div class="w-12 h-12 bg-slate-300 rounded-lg flex items-center justify-center font-mono">...</div>
+                    </div>
+                    <p class="text-center text-sm text-slate-500 mt-2">Processes data sequentially, one step at a time.</p>
+                `,
+                transformer: `
+                    <h3 class="text-xl font-bold text-center mb-4 text-slate-800">Transformer Model</h3>
+                    <p class="text-slate-600 mb-4">A Transformer looks at the entire gesture at once. Its Self-Attention mechanism analyzes all frames in parallel, determining the relationships and importance of each frame to understand the full context instantly.</p>
+                    <div class="relative flex justify-center items-center h-24">
+                        <div class="absolute top-0 text-lg font-semibold">Self-Attention</div>
+                        <div class="flex space-x-4 mt-8">
+                            <div class="w-12 h-12 bg-blue-200 rounded-lg flex items-center justify-center font-mono">F1</div>
+                            <div class="w-12 h-12 bg-blue-200 rounded-lg flex items-center justify-center font-mono">F2</div>
+                            <div class="w-12 h-12 bg-blue-200 rounded-lg flex items-center justify-center font-mono">F3</div>
+                            <div class="w-12 h-12 bg-blue-200 rounded-lg flex items-center justify-center font-mono">...</div>
+                        </div>
+                         <div class="absolute w-full h-px bg-blue-300 top-8"></div>
+                         <div class="absolute w-px h-6 bg-blue-300" style="left: calc(50% - 78px); top: 32px;"></div>
+                         <div class="absolute w-px h-6 bg-blue-300" style="left: calc(50% - 22px); top: 32px;"></div>
+                         <div class="absolute w-px h-6 bg-blue-300" style="left: calc(50% + 34px); top: 32px;"></div>
+                         <div class="absolute w-px h-6 bg-blue-300" style="left: calc(50% + 90px); top: 32px;"></div>
+                    </div>
+                     <p class="text-center text-sm text-slate-500 mt-2">Processes all data in parallel, understanding context.</p>
+                `
+            };
+            
+            function updateAlgorithmContent(type) {
+                algorithmContent.innerHTML = content[type];
+                if (type === 'lstm') {
+                    lstmBtn.classList.add('active-tab');
+                    transformerBtn.classList.remove('active-tab');
+                } else {
+                    transformerBtn.classList.add('active-tab');
+                    lstmBtn.classList.remove('active-tab');
+                }
+            }
+
+            lstmBtn.addEventListener('click', () => updateAlgorithmContent('lstm'));
+            transformerBtn.addEventListener('click', () => updateAlgorithmContent('transformer'));
+            updateAlgorithmContent('transformer');
+
+
+            // Chart.js Overfitting Visualization
+            const ctx = document.getElementById('overfittingChart').getContext('2d');
+            const smallDataBtn = document.getElementById('small-data-btn');
+            const largeDataBtn = document.getElementById('large-data-btn');
+            const chartExplanation = document.getElementById('chart-explanation');
+            let overfittingChart;
+
+            const chartData = {
+                small: {
+                    labels: ['Epoch 1', 'Epoch 40', 'Epoch 80', 'Epoch 120', 'Epoch 160', 'Epoch 200'],
+                    datasets: [{
+                        label: 'Training Accuracy',
+                        data: [0.35, 0.85, 0.98, 0.99, 1.0, 1.0],
+                        borderColor: 'rgb(59, 130, 246)',
+                        tension: 0.1,
+                        borderWidth: 2
+                    }, {
+                        label: 'Validation Accuracy',
+                        data: [0.33, 0.35, 0.32, 0.41, 0.38, 0.40],
+                        borderColor: 'rgb(239, 68, 68)',
+                        tension: 0.1,
+                        borderWidth: 2,
+                        borderDash: [5, 5]
+                    }],
+                    explanation: "With a small dataset, Training Accuracy quickly reaches 100% (memorization), while Validation Accuracy stagnates at a low level. The large gap indicates severe overfitting."
+                },
+                large: {
+                    labels: ['Epoch 1', 'Epoch 40', 'Epoch 80', 'Epoch 120', 'Epoch 160', 'Epoch 200'],
+                    datasets: [{
+                        label: 'Training Accuracy',
+                        data: [0.35, 0.60, 0.75, 0.85, 0.92, 0.95],
+                        borderColor: 'rgb(59, 130, 246)',
+                        tension: 0.1,
+                        borderWidth: 2
+                    }, {
+                        label: 'Validation Accuracy',
+                        data: [0.33, 0.58, 0.72, 0.83, 0.90, 0.93],
+                        borderColor: 'rgb(34, 197, 94)',
+                        tension: 0.1,
+                        borderWidth: 2,
+                        borderDash: [5, 5]
+                    }],
+                    explanation: "With a larger dataset, both accuracies rise together and converge. This shows the model is generalizing well and learning the true patterns, not just memorizing the data."
+                }
+            };
+
+            function createOrUpdateChart(dataType) {
+                const data = chartData[dataType];
+                chartExplanation.textContent = data.explanation;
+
+                if (dataType === 'small') {
+                    smallDataBtn.classList.add('active-tab');
+                    largeDataBtn.classList.remove('active-tab');
+                } else {
+                    largeDataBtn.classList.add('active-tab');
+                    smallDataBtn.classList.remove('active-tab');
+                }
+
+                if (overfittingChart) {
+                    overfittingChart.data.labels = data.labels;
+                    overfittingChart.data.datasets = data.datasets;
+                    overfittingChart.update();
+                } else {
+                    overfittingChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.labels,
+                            datasets: data.datasets
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 1.1,
+                                    title: {
+                                        display: true,
+                                        text: 'Accuracy'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Model Performance: Training vs. Validation',
+                                    font: { size: 16 }
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            smallDataBtn.addEventListener('click', () => createOrUpdateChart('small'));
+            largeDataBtn.addEventListener('click', () => createOrUpdateChart('large'));
+            createOrUpdateChart('large'); // Initial chart state
+        });
+    </script>
+</body>
+</html>
