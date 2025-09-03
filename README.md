@@ -2,6 +2,10 @@
 
 This project is a complete system for real-time sign language recognition using a webcam. It leverages a state-of-the-art Transformer architecture to translate common sign language gestures into text, demonstrating a modern approach to sequence-based machine learning tasks.
 
+### Google-Colab Live Code Link
+
+[Open in Google Colab](https://colab.research.google.com/drive/1-gAgzVn9pHJw68kWEJmmUeG_U8Azfvs9?usp=sharing)
+
 ---
 
 ## 🚀 Project Overview
