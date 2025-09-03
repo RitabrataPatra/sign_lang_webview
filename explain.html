@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Model Code Explanation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony Neutrals -->
+    <!-- Application Structure Plan: The application is structured as a single-page, vertical report. Each major section of the code explanation ('Imports', 'PositionalEncoding', etc.) is a distinct, collapsible module. This design allows users to focus on one component at a time, expanding the code block for detailed review or collapsing it to read the high-level explanation. This task-oriented approach (understanding one piece of code at a time) is more user-friendly than a static document, as it reduces cognitive load and allows for self-paced learning. -->
+    <!-- Visualization & Content Choices: 
+        - Code Snippets: Presented in pre-formatted blocks -> Goal: Inform -> Interaction: A toggle button allows users to show/hide the code, giving them control over the level of detail they see. Method: HTML/JS.
+        - Explanatory Text: Presented alongside code -> Goal: Explain -> Interaction: Dynamically linked to the code visibility toggle. Method: HTML/JS.
+        - Structure: The content from the source doc is broken into logical, interactive sections to improve navigation and focus, rather than being a single static page.
+        - Justification: This interactive structure turns a passive reading experience into an active exploration, making the complex code more approachable and understandable. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #1e293b; /* slate-800 */
+            color: #e2e8f0; /* slate-200 */
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+        .code-block .token-comment { color: #64748b; }
+        .code-block .token-keyword { color: #93c5fd; }
+        .code-block .token-function { color: #a5b4fc; }
+        .code-block .token-class-name { color: #fde047; }
+        .code-block .token-number { color: #d8b4fe; }
+        .code-block .token-ellipsis { color: #94a3b8; }
+        .code-block .token-string { color: #bef264; }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header class="bg-white/90 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4">
+            <h1 class="text-2xl font-bold text-slate-900">An Explanation of the Transformer Model Code</h1>
+            <p class="text-slate-600 mt-1">This document outlines the Python code used to construct the Transformer model, built with TensorFlow and Keras.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 space-y-8">
+
+        <!-- Section 1: Component Imports -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-slate-200">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl md:text-2xl font-bold text-slate-800">Component Imports</h2>
+                <button data-target="imports-code" class="toggle-btn px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition">Show Code</button>
+            </div>
+            <div id="imports-code" class="collapsible-content mt-4">
+                <div class="code-block">
+<pre><code><span class="token-keyword">import</span> tensorflow <span class="token-keyword">as</span> tf
+<span class="token-keyword">from</span> tensorflow.keras.layers <span class="token-keyword">import</span> (
+    Input, Dense, LayerNormalization, Dropout,
+    MultiHeadAttention, GlobalAveragePooling1D
+)
+<span class="token-keyword">from</span> tensorflow.keras.models <span class="token-keyword">import</span> Model</code></pre>
+                </div>
+            </div>
+            <div class="mt-4 prose max-w-none text-slate-600">
+                <p>This initial section imports the necessary components from TensorFlow. Each imported class serves as a fundamental building block for the neural network.</p>
+                <ul class="list-disc pl-5 space-y-2 mt-4">
+                    <li><strong>Input:</strong> Defines the expected shape of the input data that will be fed into the model.</li>
+                    <li><strong>Dense, LayerNormalization, Dropout:</strong> These are standard layers used for data processing, improving training stability, and preventing the model from overfitting.</li>
+                    <li><strong>MultiHeadAttention:</strong> This is the core component that implements the self-attention mechanism, which is the key feature of the Transformer architecture.</li>
+                    <li><strong>GlobalAveragePooling1D:</strong> This layer is used to summarize the sequence of information into a single vector before the final classification is made.</li>
+                    <li><strong>Model:</strong> This class is used to encapsulate all the layers into a single, trainable object.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Section 2: PositionalEncoding Layer -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-slate-200">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl md:text-2xl font-bold text-slate-800">Part 1: The `PositionalEncoding` Layer</h2>
+                <button data-target="pos-encoding-code" class="toggle-btn px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition">Show Code</button>
+            </div>
+            <div class="mt-4 prose max-w-none text-slate-600">
+                <p>By design, a Transformer processes all elements of a sequence in parallel, which means it has no inherent understanding of the order (e.g., which frame came first or last). This custom `PositionalEncoding` layer addresses this by adding information about the position of each frame directly into the data.</p>
+            </div>
+            <div id="pos-encoding-code" class="collapsible-content mt-4">
+                <div class="code-block">
+<pre><code><span class="token-keyword">class</span> <span class="token-class-name">PositionalEncoding</span>(tf.keras.layers.Layer):
+    <span class="token-keyword">def</span> <span class="token-function">__init__</span>(<span class="token-keyword">self</span>, position, d_model, **kwargs):
+        <span class="token-keyword">super</span>(PositionalEncoding, <span class="token-keyword">self</span>).<span class="token-function">__init__</span>(**kwargs)
+        <span class="token-keyword">self</span>.pos_encoding = <span class="token-keyword">self</span>.positional_encoding(position, d_model)
+    
+    <span class="token-ellipsis"># ... (mathematical functions to create unique position vectors) ...</span>
+
+    <span class="token-keyword">def</span> <span class="token-function">call</span>(<span class="token-keyword">self</span>, inputs):
+        <span class="token-comment"># Adds the positional information to the input data</span>
+        <span class="token-keyword">return</span> inputs + <span class="token-keyword">self</span>.pos_encoding[:, : tf.shape(inputs)[<span class="token-number">1</span>], :]</code></pre>
+                </div>
+            </div>
+            <div class="mt-4 prose max-w-none text-slate-600">
+                <h3 class="font-semibold text-slate-700">How it works:</h3>
+                <ul class="list-disc pl-5 space-y-2 mt-2">
+                    <li>The <strong>`__init__`</strong> method runs once to pre-calculate a unique mathematical vector, or "signature," for every position in the sequence using sine and cosine functions.</li>
+                    <li>The <strong>`call`</strong> method then takes the landmark data for each frame and adds this unique positional signature to it. This allows the model to differentiate between the same hand shape appearing at the beginning versus the end of a sign.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 3: TransformerBlock Layer -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-slate-200">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl md:text-2xl font-bold text-slate-800">Part 2: The `TransformerBlock` Layer</h2>
+                <button data-target="transformer-block-code" class="toggle-btn px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition">Show Code</button>
+            </div>
+            <div class="mt-4 prose max-w-none text-slate-600">
+                <p>This is the central processing unit of the model. It contains the self-attention mechanism and is responsible for analyzing the relationships between all frames in the sequence to understand the gesture's context.</p>
+            </div>
+            <div id="transformer-block-code" class="collapsible-content mt-4">
+                <div class="code-block">
+<pre><code><span class="token-keyword">class</span> <span class="token-class-name">TransformerBlock</span>(tf.keras.layers.Layer):
+    <span class="token-keyword">def</span> <span class="token-function">__init__</span>(<span class="token-keyword">self</span>, embed_dim, num_heads, ff_dim, rate=<span class="token-number">0.1</span>, **kwargs):
+        <span class="token-keyword">super</span>(TransformerBlock, <span class="token-keyword">self</span>).<span class="token-function">__init__</span>(**kwargs)
+        <span class="token-comment"># The self-attention layer is the core of this block.</span>
+        <span class="token-keyword">self</span>.att = MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)
+        
+        <span class="token-comment"># A standard feed-forward network for further processing.</span>
+        <span class="token-keyword">self</span>.ffn = tf.keras.Sequential([<span class="token-ellipsis">...</span>])
+        
+        <span class="token-comment"># Helper layers for stabilization.</span>
+        <span class="token-keyword">self</span>.layernorm1 = LayerNormalization(epsilon=<span class="token-number">1e-6</span>)
+        <span class="token-ellipsis"># ... and so on ...</span>
+
+    <span class="token-keyword">def</span> <span class="token-function">call</span>(<span class="token-keyword">self</span>, inputs, training=<span class="token-keyword">None</span>):
+        <span class="token-comment"># 1. The data is passed through the attention layer.</span>
+        attn_output = <span class="token-keyword">self</span>.att(inputs, inputs)
+        
+        <span class="token-comment"># 2. The result is then processed by the feed-forward network.</span>
+        ffn_output = <span class="token-keyword">self</span>.ffn(out1)
+        
+        <span class="token-comment"># 3. The final output of the block is returned.</span>
+        <span class="token-keyword">return</span> <span class="token-keyword">self</span>.layernorm2(out1 + ffn_output)</code></pre>
+                </div>
+            </div>
+            <div class="mt-4 prose max-w-none text-slate-600">
+                <h3 class="font-semibold text-slate-700">How it works:</h3>
+                <ul class="list-disc pl-5 space-y-2 mt-2">
+                    <li>The <strong>`__init__`</strong> method initializes the necessary layers: the `MultiHeadAttention` layer, a simple feed-forward network, and several helper layers for normalization and dropout to ensure stable training.</li>
+                    <li>The <strong>`call`</strong> method defines the path the data takes through the block. It first flows through the attention layer, which identifies the important relationships between frames, and is then processed further by the other layers to extract more complex patterns.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 4: Create Model Function -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-slate-200">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl md:text-2xl font-bold text-slate-800">Part 3: Assembling the Final Model</h2>
+                <button data-target="create-model-code" class="toggle-btn px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition">Show Code</button>
+            </div>
+            <div class="mt-4 prose max-w-none text-slate-600">
+                <p>This `create_model` function brings all the custom and standard layers together to construct the final, complete model that is ready for training.</p>
+            </div>
+            <div id="create-model-code" class="collapsible-content mt-4">
+                <div class="code-block">
+<pre><code><span class="token-keyword">def</span> <span class="token-function">create_model</span>(num_actions, sequence_length=<span class="token-number">30</span>, input_dim=<span class="token-number">1662</span>, <span class="token-ellipsis">...</span>):
+    <span class="token-comment"># 1. Define the model's input shape.</span>
+    inputs = Input(shape=(sequence_length, input_dim))
+    
+    <span class="token-comment"># 2. Add the positional information.</span>
+    x = PositionalEncoding(sequence_length, embed_dim)(x)
+    
+    <span class="token-comment"># 3. Process the data through the main Transformer block.</span>
+    x = transformer_block(x)
+    
+    <span class="token-comment"># 4. Condense the sequence information into a single summary.</span>
+    x = GlobalAveragePooling1D()(x)
+    
+    <span class="token-comment"># 5. The output layer produces the final prediction probabilities.</span>
+    outputs = Dense(num_actions, activation=<span class="token-string">"softmax"</span>)(x)
+
+    <span class="token-comment"># 6. Package and compile the model for training.</span>
+    model = Model(inputs=inputs, outputs=outputs)
+    model.compile(<span class="token-ellipsis">...</span>)
+    
+    <span class="token-keyword">return</span> model</code></pre>
+                </div>
+            </div>
+            <div class="mt-4 prose max-w-none text-slate-600">
+                 <h3 class="font-semibold text-slate-700">How it works:</h3>
+                <p>This function defines the model's architecture from start to finish. It accepts the raw landmark data, enriches it with positional context, processes it through the `TransformerBlock`, summarizes the results, and finally passes it to an output layer that produces the final probabilities for each sign (e.g., hello: 90%, thanks: 8%, iloveyou: 2%).</p>
+            </div>
+        </div>
+
+    </main>
+    
+    <footer class="bg-slate-800 text-slate-400 py-6 mt-16">
+        <div class="container mx-auto px-6 text-center text-sm">
+            <p>&copy; 2025 Sign-Language Project Showcase.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButtons = document.querySelectorAll('.toggle-btn');
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-target');
+                    const targetElement = document.getElementById(targetId);
+
+                    if (targetElement.style.maxHeight) {
+                        targetElement.style.maxHeight = null;
+                        button.textContent = 'Show Code';
+                    } else {
+                        targetElement.style.maxHeight = targetElement.scrollHeight + 'px';
+                        button.textContent = 'Hide Code';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
